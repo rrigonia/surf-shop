@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const { postRegister, index, getRegister } = require('../controllers/index');
+const {wrapAsync} = require('../middleware')
+const { postRegister, index, getRegister } = require('../controllers');
 
 /* GET home page. */
 router.get('/', index);
 
-/* GET /register */
-router.get('/register', getRegister);
+// REGISTER ROUTE
+router.route('/register')
+  .get(getRegister)
+  .post(wrapAsync(postRegister));
 
-/* POST /register */
-router.post('/register', postRegister);
 
 /* GET /login */
 router.get('/login', function (req, res, next) {

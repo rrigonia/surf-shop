@@ -10,8 +10,6 @@ const User = require('./models/user');
 const Post = require('./models/post');
 const Review = require('./models/review');
 
-
-
 // Require Routes
 const indexRouter = require('./routes/index');
 const postsRouter = require('./routes/posts');
@@ -53,7 +51,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
-// Routes
+// Mount Routes
 app.use('/', indexRouter);
 app.use('/posts', postsRouter);
 app.use('/posts/:id/reviews', reviewsRouter);
