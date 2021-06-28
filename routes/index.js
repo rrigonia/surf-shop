@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 const {wrapAsync} = require('../middleware')
-const { postRegister, index, getRegister } = require('../controllers');
+const { postRegister, index, getRegister, postLogin, getLogout } = require('../controllers');
 
 /* GET home page. */
 router.get('/', index);
@@ -13,42 +14,44 @@ router.route('/register')
 
 
 /* GET /login */
-router.get('/login', function (req, res, next) {
+router.get('/login', (req, res, next) => {
   res.send('GET /login');
 });
 
 /* POST /login */
-router.post('/login', function (req, res, next) {
-  res.send('POST /login');
-});
+router.post('/login', passport.authenticate('local', {
+  failureRedirect: '/login'}), postLogin);
+
+// GET /logout
+router.get('/logout', getLogout);
 
 /* GET /profile */
-router.get('/profile', function (req, res, next) {
+router.get('/profile', (req, res, next) => {
   res.send('GET /profile');
 });
 
 /* PUT /profile/:user_id */
-router.put('/profile/:user_id', function (req, res, next) {
+router.put('/profile/:user_id', (req, res, next) => {
   res.send('PUT /profile/:user_id');
 });
 
 /* GET /forgot */
-router.get('/forgot', function (req, res, next) {
+router.get('/forgot', (req, res, next) => {
   res.send('GET /forgot');
 });
 
 /* PUT /forgot */
-router.put('/forgot', function (req, res, next) {
+router.put('/forgot', (req, res, next) => {
   res.send('PUT /forgot');
 });
 
 /* GET /reset/:token */
-router.get('/reset/:token', function (req, res, next) {
+router.get('/reset/:token', (req, res, next) => {
   res.send('GET /reset/:token');
 });
 
 /* PUT /reset/:token */
-router.put('/reset/:token', function (req, res, next) {
+router.put('/reset/:token', (req, res, next) => {
   res.send('PUT /reset/:token');
 });
 

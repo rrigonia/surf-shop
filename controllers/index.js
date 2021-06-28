@@ -21,3 +21,13 @@ module.exports.postRegister = async (req, res, next) => {
     res.redirect('/');
 };
 
+// POST LOGIN
+module.exports.postLogin = (req,res,next) => {
+    res.redirect('/');
+};
+
+// GET LOGOUT
+module.exports.getLogout = (req,res,next) => {
+    req.logout();
+    res.redirect('/login');
+};
