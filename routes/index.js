@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const {wrapAsync} = require('../middleware')
-const { postRegister, index, getRegister, postLogin, getLogout } = require('../controllers');
+const { postRegister,  getRegister, index, postLogin, getLogin, getLogout } = require('../controllers');
 
 /* GET home page. */
 router.get('/', index);
@@ -14,9 +14,7 @@ router.route('/register')
 
 
 /* GET /login */
-router.get('/login', (req, res, next) => {
-  res.send('GET /login');
-});
+router.get('/login', getLogin);
 
 /* POST /login */
 router.post('/login', passport.authenticate('local', {

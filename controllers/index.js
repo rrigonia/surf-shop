@@ -21,6 +21,11 @@ module.exports.postRegister = async (req, res, next) => {
     res.redirect('/');
 };
 
+// GET LOGIN
+module.exports.getLogin = (req, res, next) => {
+    res.send('GET /login');
+}
+
 // POST LOGIN
 module.exports.postLogin = (req,res,next) => {
     res.redirect('/');
