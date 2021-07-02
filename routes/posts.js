@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const {storage} = require('../cloudinary')
+const upload = multer({storage});
 const {wrapAsync} = require('../middleware');
 const {postIndex, postNew, postCreate, postShow, postEdit, postUpdate, postDestroy} = require('../controllers/posts')
 
@@ -12,16 +15,16 @@ router.get('/', wrapAsync(postIndex));
 router.get('/new', postNew);
 
 /* POST posts create  /posts */
-router.post('/', wrapAsync(postCreate));
+router.post('/', upload.array('images', 4), wrapAsync(postCreate));
   
-/* GET posts show  /posts/:id */
+/* GET posts show  /posts/:id */             
 router.get('/:id', wrapAsync(postShow));
 
 /* GET posts edit  /posts/:id/edit */
-router.get('/:id/edit', wrapAsync(postEdit));
+router.get('/:id/edit',  wrapAsync(postEdit));
 
 /* PUT posts update  /posts/:id */
-router.put('/:id', wrapAsync(postUpdate));
+router.put('/:id', upload.array('images', 4), wrapAsync(postUpdate));
 
 /* DELETE posts destroy  /posts/:id */
 router.delete('/:id', wrapAsync(postDestroy));

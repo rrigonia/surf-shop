@@ -5,6 +5,13 @@
 <div>Description: <%=post.description%></div>
 <div>Location: <%=post.location%></div>
 <div>
+    <% if(post.images.length) {%>
+        <% for(image of post.images) {%>
+            <img src="<%=image.little%>" alt="">
+            <% } %>  
+        <% } %>  
+</div>
+<div>
     <a href="/posts/<%=post._id%>/edit">
         <button>Edit</button>
     </a>
