@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const passport = require('passport');
 const User = require('./models/user');
+const ejsMate = require('ejs-mate');
 
 // Require Routes
 const indexRouter = require('./routes/index');
@@ -20,7 +21,7 @@ const app = express();
 
 // Connect to the Database
 mongoose.set('useCreateIndex', true);
-mongoose.connect('mongodb://localhost:27017/surf-shop', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/surf-shop-mapbox', { useNewUrlParser: true, useUnifiedTopology: true });
 // testing db
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -29,6 +30,7 @@ db.once('open', function () {
 });
 
 // view engine setup
+app.engine('ejs', ejsMate)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 

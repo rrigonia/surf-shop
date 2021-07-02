@@ -1,4 +1,7 @@
+<% layout('layouts/boilerplate') %>
 <h1>Show page</h1>
+
+<div id='map' style='width: 400px; height: 300px;'></div>
 
 <h2> <%=post.title%> </h2>
 <div>Price: <%=post.price%></div>
@@ -21,3 +24,19 @@
         <input type="submit" value="Delete">
     </form>
 </div>
+
+
+<script>
+    mapboxgl.accessToken = '<%-process.env.MAPBOX_TOKEN%>';
+    const map = new mapboxgl.Map({
+    container: 'map', // container ID
+    style: 'mapbox://styles/mapbox/streets-v11', // style URL
+    center: [<%-post.geometry.coordinates%>], // starting position [lng, lat]
+    zoom: 9 // starting zoom
+    });
+    
+    const marker1 = new mapboxgl.Marker()
+.setLngLat([<%-post.geometry.coordinates%>])
+.addTo(map);
+
+    </script>
