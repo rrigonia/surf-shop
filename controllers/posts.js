@@ -45,7 +45,11 @@ module.exports.postEdit = async (req, res, next) => {
 // EDIT POST
 module.exports.postUpdate = async (req, res, next) => {
 
-    const post = await Post.findByIdAndUpdate(req.params.id, req.body.post);
+    const post = await Post.findByIdAndUpdate(req.params.id, req.body.post, {new: true});
+    const geolocation = await geocoder.forwardGeocode({
+        query: post.location,
+        limit: 1
+    }).send();
     // handle any deletion of existing img
     if (req.body.deleteImages) {
         for (let filename of req.body.deleteImages) {
@@ -56,6 +60,7 @@ module.exports.postUpdate = async (req, res, next) => {
     // handle upload of new imgs
     const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
     post.images.push(...imgs);
+    post.geometry = (geolocation.body.features[0].geometry); 
     await post.save();
     // 
     res.redirect(`/posts/${post._id}`);
