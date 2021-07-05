@@ -1,9 +1,6 @@
-<% layout('layouts/boilerplate') %>
-
+<% layout('layouts/post-show-layout') %>
 <h1>Show page</h1>
-
 <div id='map' style='width: 400px; height: 300px;'></div>
-
 <h2> <%=post.title%> </h2>
 <div>Price: <%=post.price%></div>
 <div>Description: <%=post.description%></div>
@@ -25,10 +22,3 @@
         <input type="submit" value="Delete">
     </form>
 </div>
-
-<script>
-    const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
-    const post = <%-JSON.stringify(post)%>
-</script>
-
-<script src="/javascripts/map.js"></script>

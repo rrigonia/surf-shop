@@ -55,6 +55,11 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// set title middleware
+app.use(function(req,res,next){
+  res.locals.title = 'Surf-Shop';
+  next();
+});
 
 // Mount Routes
 app.use('/', indexRouter);
@@ -76,5 +81,7 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
 
 module.exports = app;

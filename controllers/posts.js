@@ -8,12 +8,12 @@ const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 // POSTs INDEX
 module.exports.postIndex = async (req, res, next) => {
     const posts = await Post.find({});
-    res.render('posts/index', { posts });
+    res.render('posts/index', { posts, title: 'Surf Shop - Posts' });
 };
 
 // NEW POST
 module.exports.postNew = (req, res, next) => {
-    res.render('posts/new');
+    res.render('posts/new', { title: 'Surf Shop - NewPost' });
 };
 
 // CREATE POST
@@ -33,13 +33,13 @@ module.exports.postCreate = async (req, res, next) => {
 // SHOW POST
 module.exports.postShow = async (req, res, next) => {
     const post = await Post.findById(req.params.id);
-    res.render('posts/show', { post });
+    res.render('posts/show', { post, title: 'Surf Shop - ShowPost' });
 };
 
 // EDIT POST
 module.exports.postEdit = async (req, res, next) => {
     const post = await Post.findById(req.params.id);
-    res.render('posts/edit', { post });
+    res.render('posts/edit', { post, title: 'Surf Shop - Edit' });
 };
 
 // EDIT POST
