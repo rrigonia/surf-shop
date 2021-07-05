@@ -27,6 +27,7 @@ module.exports.postCreate = async (req, res, next) => {
     post.geometry = (geolocation.body.features[0].geometry);
     post.images = req.files.map(f => ({ url: f.path, filename: f.filename }))
     await post.save();
+    req.session.success = 'Post created successfully';
     res.redirect(`/posts/${post._id}`);
 };
 
