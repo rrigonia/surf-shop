@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Review = require('./review');
 const Schema = mongoose.Schema;
 
 const ImageSchema = new Schema({
@@ -40,6 +41,14 @@ const PostSchema = new Schema({
             ref: 'Review'
         }
     ]
+});
+
+PostSchema.pre('deleteOne',{ document: true, query: false }, async function(){
+    await Review.deleteMany({
+        _id: {
+            $in: this.reviews
+        }
+    });
 });
 
 

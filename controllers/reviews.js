@@ -4,14 +4,21 @@ const Review = require('../models/review');
 
 // Reviews Create
 module.exports.reviewCreate = async (req, res, next) => {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id).populate('reviews').exec();
+    let haveReviewed = post.reviews.filter(review => {
+        return review.author.equals(req.user._id);
+    }).length;
+    if(haveReviewed) {
+        req.session.error = 'Sorry, you can only create 1 review per post.'
+        res.redirect(`/posts/${post._id}`)
+    } else {
     req.body.review.author = req.user._id
     const review = await Review.create(req.body.review);   
     post.reviews.push(review);
     await post.save();
     req.session.success = 'Review created successfully!';
     res.redirect(`/posts/${post._id}`)
-};
+}};
 
 // Reviews Update
 module.exports.reviewUpdate = async (req, res, next) => {
