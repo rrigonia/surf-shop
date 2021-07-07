@@ -7,7 +7,11 @@ const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 
 // POSTs INDEX
 module.exports.postIndex = async (req, res, next) => {
-    const posts = await Post.find({});
+    const posts = await Post.paginate({}, {
+        page: req.query.page || 1,
+        limit: 10
+    });
+    posts.page = Number(posts.page)
     res.render('posts/index', { posts, title: 'Surf Shop - Posts' });
 };
 
@@ -42,7 +46,8 @@ module.exports.postShow = async (req, res, next) => {
             model: 'User'
         }
     });
-    res.render('posts/show', { post, title: 'Surf Shop - ShowPost' });
+    const floorRating = post.calculateAvgRating();
+    res.render('posts/show', { post, title: 'Surf Shop - ShowPost', floorRating });
 };
 
 // EDIT POST
@@ -84,6 +89,6 @@ module.exports.postDestroy = async (req, res, next) => {
             await cloudinary.uploader.destroy(image.filename);
         }
     };
-    await post.deleteOne();
+    await post.remove();
     res.redirect(`/posts`);
 };

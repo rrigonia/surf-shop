@@ -12,6 +12,7 @@ const passport = require('passport');
 const User = require('./models/user');
 const ejsMate = require('ejs-mate');
 
+
 // Require Routes
 const indexRouter = require('./routes/index');
 const postsRouter = require('./routes/posts');
@@ -59,8 +60,8 @@ passport.deserializeUser(User.deserializeUser());
 // set variables middleware
 app.use(function(req,res,next){
   req.user = {
-   '_id' :'60e5a9c0cf38c631dc32b519',
-   'username' : 'ramon2'
+   '_id' :'60e615101d93aa3ea0575b5f',
+   'username' : 'ramon3'
     };
   res.locals.currentUser = req.user;
   // set default page title
