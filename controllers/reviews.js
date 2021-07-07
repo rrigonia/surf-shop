@@ -23,5 +23,9 @@ module.exports.reviewUpdate = async (req, res, next) => {
 
 // Reviews Destroy
 module.exports.reviewDestroy = async (req, res, next) => {
-    res.send("DESTROY REVIEW")
+    const {id, review_id} = req.params;
+    const post = await Post.findByIdAndUpdate(id, {$pull: {reviews: {$in: req.params.review_id}}} );
+    await Review.findByIdAndDelete(review_id);
+    req.session.success = 'Review Deleted Successfully!'
+    res.redirect(`/posts/${id}`);
 };
