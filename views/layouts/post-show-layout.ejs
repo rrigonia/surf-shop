@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
+    <link rel="shortcut icon" href="#">
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <link rel='stylesheet' href='/stylesheets/post-show.css' />
@@ -21,8 +22,7 @@
         const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
         const post = <%-JSON.stringify(post)%>
     </script>
-    <script src="/javascripts/map.js"></script>
-
+    <script src="/javascripts/post-show.js"></script>
 </body>
 
 </html>

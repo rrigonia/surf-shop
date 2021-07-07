@@ -33,9 +33,14 @@ module.exports.postCreate = async (req, res, next) => {
 
 // SHOW POST
 module.exports.postShow = async (req, res, next) => {
-    const post = await Post.findById(req.params.id).populate({
+    const {id} = req.params
+    const post = await Post.findById(id).populate({
         path: 'reviews',
-        options: {sort: {'_id': -1}}
+        options: {sort: {'_id': -1}},
+        populate: {
+            path: 'author',
+            model: 'User'
+        }
     });
     res.render('posts/show', { post, title: 'Surf Shop - ShowPost' });
 };

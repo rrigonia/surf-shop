@@ -5,7 +5,7 @@ const Review = require('../models/review');
 // Reviews Create
 module.exports.reviewCreate = async (req, res, next) => {
     const post = await Post.findById(req.params.id);
-    // req.body.review.author = req.user._id
+    req.body.review.author = req.user._id
     const review = await Review.create(req.body.review);   
     post.reviews.push(review);
     await post.save();
@@ -15,7 +15,10 @@ module.exports.reviewCreate = async (req, res, next) => {
 
 // Reviews Update
 module.exports.reviewUpdate = async (req, res, next) => {
-    res.send("UPDATE REVIEW")
+    const {review_id, id} = req.params
+    const review = await Review.findByIdAndUpdate(review_id, req.body.review);
+    req.session.success = 'Review Updated Successfully!'
+    res.redirect(`/posts/${id}`);
 };
 
 // Reviews Destroy

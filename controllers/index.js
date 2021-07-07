@@ -17,7 +17,6 @@ module.exports.postRegister = async (req, res, next) => {
     const { username, password, email, image } = req.body;
     const newUser = new User({ username, email, image });
     const user = await User.register(newUser, password);
-    console.log(user);
     res.redirect('/');
 };
 

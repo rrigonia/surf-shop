@@ -1,5 +1,5 @@
 const express = require('express');
-const {wrapAsync} = require('../middleware');
+const {wrapAsync, isReviewAuthor} = require('../middleware');
 const {reviewCreate, reviewUpdate, reviewDestroy} = require('../controllers/reviews');
 const router = express.Router({ mergeParams: true });
 
@@ -8,7 +8,7 @@ const router = express.Router({ mergeParams: true });
 router.post('/', wrapAsync(reviewCreate));
 
 /* PUT reviews update  /post/:id/reviews/:review_id */
-router.put('/:review_id', wrapAsync(reviewUpdate));
+router.put('/:review_id',isReviewAuthor, wrapAsync(reviewUpdate));
 
 /* DELETE reviews destroy  /post/:id/reviews/:review_id */
 router.delete('/:review_id', wrapAsync(reviewDestroy));
