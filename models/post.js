@@ -15,6 +15,8 @@ ImageSchema.virtual('thumb').get(function (){
     return this.url.replace('/upload', '/upload/w_80')
 });
 
+const opts = { toJSON: { virtuals: true} };
+
 const PostSchema = new Schema({
     title: String,
     price: String,
@@ -25,11 +27,11 @@ const PostSchema = new Schema({
         type: {
             type: String,
             enum: ['Point'],
-            // required: true
+            required: true
         },
         coordinates: {
             type: [Number],
-            // required: true
+            required: true
         }
     },
     author: {
@@ -43,7 +45,14 @@ const PostSchema = new Schema({
         }
     ],
     avgRating: {type: Number, default: 0}
+}, opts);
+
+PostSchema.virtual('properties.popUpMark').get(function () {
+    return `
+    <strong class="lead"><a href="/posts/${this._id}">${this.title}</a></strong>
+    <p>${this.description.substring(0,40)}...</p> `
 });
+
 
 PostSchema.pre('remove', async function(){
     console.log(this)

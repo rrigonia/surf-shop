@@ -1,10 +1,15 @@
 const User = require('../models/user');
+const Post = require('../models/post');
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 
 
 
-// GET HOME
-module.exports.index = (req, res, next) => {
-    res.render('index', { title: 'Surf Shop - Home' })
+// GET LandingPage
+module.exports.index = async (req, res, next) => {
+    const posts = await Post.find({});
+    res.render('index', { posts, title: 'Surf Shop - Home' })
 };
 
 // GET REGISTER
