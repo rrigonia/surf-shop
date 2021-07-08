@@ -2,14 +2,16 @@
 const cmap = new mapboxgl.Map({
 container: 'cluster-map',
 style: 'mapbox://styles/mapbox/light-v10',
-center: [-103.59179687498357, 40.66995747013945],
+center: posts.features[0].geometry.coordinates,
 zoom: 3
 });
 
+// add Control
 cmap.addControl(
     new MapboxGeocoder({
     accessToken: mapToken,
-    })
+    mapboxgl
+    })    
 );
 
  
@@ -83,7 +85,7 @@ paint: {
 'circle-stroke-color': '#fff'
 }
 });
- 
+
 // inspect a cluster on click
 cmap.on('click', 'clusters', function (e) {
 var features = cmap.queryRenderedFeatures(e.point, {
@@ -94,11 +96,11 @@ cmap.getSource('posts').getClusterExpansionZoom(
 clusterId,
 function (err, zoom) {
 if (err) return;
- 
-cmap.easeTo({
-center: features[0].geometry.coordinates,
-zoom: zoom
-});
+cmap.flyTo({
+    center: features[0].geometry.coordinates,
+    zoom: zoom,
+    essential: true // this animation is considered essential with respect to prefers-reduced-motion
+    });
 }
 );
 });

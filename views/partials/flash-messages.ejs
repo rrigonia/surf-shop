@@ -2,6 +2,14 @@
     <h1 style="color: green;"><%= success %></h1>
 <% } %> 
 
+<% if(fsuccess && fsuccess.length) {%> 
+    <h1 style="color: green;"><%= fsuccess %></h1>
+<% } %> 
+
 <% if(error && error.length) {%> 
     <h1 style="color: red;"><%= error %></h1>
+<% } %> 
+
+<% if(ferror && ferror.length) {%> 
+    <h1 style="color: red;"><%= ferror %></h1>
 <% } %> 

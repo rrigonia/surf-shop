@@ -9,7 +9,8 @@ const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 module.exports.postIndex = async (req, res, next) => {
     const posts = await Post.paginate({}, {
         page: req.query.page || 1,
-        limit: 10
+        limit: 10,
+        sort: {'_id': -1}
     });
     posts.page = Number(posts.page)
     res.render('posts/index', { posts, title: 'Surf Shop - Posts' });
@@ -29,7 +30,8 @@ module.exports.postCreate = async (req, res, next) => {
         limit: 1
     }).send();
     post.geometry = (geolocation.body.features[0].geometry);
-    post.images = req.files.map(f => ({ url: f.path, filename: f.filename }))
+    post.author = req.user._id;
+    post.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     await post.save();
     req.session.success = 'Post created successfully';
     res.redirect(`/posts/${post._id}`);
@@ -52,8 +54,7 @@ module.exports.postShow = async (req, res, next) => {
 
 // EDIT POST
 module.exports.postEdit = async (req, res, next) => {
-    const post = await Post.findById(req.params.id);
-    res.render('posts/edit', { post, title: 'Surf Shop - Edit' });
+    res.render('posts/edit', { title: 'Surf Shop - Edit' });
 };
 
 // EDIT POST
@@ -83,7 +84,7 @@ module.exports.postUpdate = async (req, res, next) => {
 
 // DESTROY POST
 module.exports.postDestroy = async (req, res, next) => {
-    const post = await Post.findById(req.params.id);
+    const {post} = res.locals;
     if (post.images.length) {
         for (let image of post.images) {
             await cloudinary.uploader.destroy(image.filename);

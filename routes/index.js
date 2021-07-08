@@ -18,7 +18,7 @@ router.get('/login', getLogin);
 
 /* POST /login */
 router.post('/login', passport.authenticate('local', {
-  failureRedirect: '/login'}), postLogin);
+  failureRedirect: '/login', failureFlash: 'Incorrect username or password'}), postLogin);
 
 // GET /logout
 router.get('/logout', getLogout);

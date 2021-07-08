@@ -11,6 +11,7 @@ const logger = require('morgan');
 const passport = require('passport');
 const User = require('./models/user');
 const ejsMate = require('ejs-mate');
+const flash = require('connect-flash');
 
 
 // Require Routes
@@ -43,6 +44,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
+app.use(flash());
 
 // Configure Passport and Sessions
 app.use(session({
@@ -59,13 +61,16 @@ passport.deserializeUser(User.deserializeUser());
 
 // set variables middleware
 app.use(function(req,res,next){
-  req.user = {
-   '_id' :'60e615101d93aa3ea0575b5f',
-   'username' : 'ramon3'
-    };
+  // req.user = {
+  //  '_id' :'60e615101d93aa3ea0575b5f',
+  //  'username' : 'ramon3'
+  //   };
   res.locals.currentUser = req.user;
   // set default page title
   res.locals.title = 'Surf-Shop';
+  // flash mssgs succes
+  res.locals.fsuccess = req.flash('success')
+  res.locals.ferror = req.flash('error')
   // set success flash message
   res.locals.success = req.session.success || '';
   delete req.session.success;

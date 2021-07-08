@@ -22,10 +22,7 @@ async function seedPosts() {
         const post = {
             title: faker.lorem.word(),
             description: faker.lorem.text(),
-            author: {
-                _id :'60e5a9c0cf38c631dc32b519',
-                username : 'ramon2'
-            },
+            author: '60e73c701d445a10e012bb4c',
             location: `${cities[rand1000].city} ${cities[rand1000].state}`,
             geometry: {
                 type: 'Point',
