@@ -1,14 +1,13 @@
 <% layout('layouts/post-show-layout') %>
     <h1>Show page</h1>
-    <div id='map' style='width: 400px; height: 300px;'></div>
+    
     <h2><%=post.title%></h2>
+    <p class="starability-result" data-rating="<%=floorRating%>"></p>
     <div>Price: <%=post.price%></div>
     <div>Description: <%=post.description%></div>
     <div>Location: <%=post.location%></div>
-    <div>AVG RATING: <p class="starability-result" data-rating="<%=floorRating%>">
-      </p> </div>
-    
-    
+    <div id='map' style='width: 400px; height: 300px;'></div>  
+        
     <div>
         <% if(post.images.length) {%>
             <% for(image of post.images) {%>
