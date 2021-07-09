@@ -53,7 +53,7 @@ module.exports.postShow = async (req, res, next) => {
 };
 
 // EDIT POST
-module.exports.postEdit = async (req, res, next) => {
+module.exports.postEdit = (req, res, next) => {
     res.render('posts/edit', { title: 'Surf Shop - Edit' });
 };
 

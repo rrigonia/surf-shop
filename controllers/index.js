@@ -41,7 +41,9 @@ module.exports.postRegister = async (req, res, next) => {
 
 // GET LOGIN
 module.exports.getLogin = (req, res, next) => {
-    if(req.isAuthenticated()) return res.redirect('/')
+    if(req.isAuthenticated()) return res.redirect('/');
+    if(req.query.returnTo) req.session.redirectTo = req.headers.referer;
+    console.log(req.headers)
     res.render('users/login', { title: 'Surf Shop - Login' });
 }
 
@@ -56,4 +58,10 @@ module.exports.postLogin = async (req,res,next) => {
 module.exports.getLogout = (req,res,next) => {
     req.logout();
     res.redirect('/login');
+};
+
+// GET PROFILE
+module.exports.getProfile = async (req, res, next) => {
+    const posts = await Post.find({author: req.user._id}).limit(10).exec();
+    res.render('users/profile', {posts, title: `Surf Shop - ${req.user.username}`})
 };

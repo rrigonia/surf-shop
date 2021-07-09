@@ -29,6 +29,7 @@
     </div>
     <% } %> 
 
+    <% if(currentUser) {%> 
     <h2>Create a Review</h2>
     <form action="/posts/<%=post._id%>/reviews" method="POST">
         <textarea name="review[body]" id="" cols="30" rows="5" required></textarea>
@@ -48,8 +49,16 @@
         </fieldset>
         <input type="submit">
     </form>
+    <% } else {%>
+    <h2><a href="/login?returnTo=true">Create a Review</a></h2>
+    <% } %> 
 
+    <% if(post.reviews.length) {%> 
     <h3>Reviews</h3>
+    <% } else {%>
+         <h3>There is no reviews for this Post.</h3>
+    <% } %> 
+
     <% for(let review of post.reviews) {%>
         <div>
             <h5>
@@ -60,7 +69,7 @@
             </p>
             
         </div>
-        <% if(review.author.equals(currentUser._id)) {%> 
+        <% if(currentUser && review.author.equals(currentUser._id)) {%> 
         <div>
             <button class="toggle-edit-form">Edit</button>
             <form action="/posts/<%=post._id%>/reviews/<%=review._id%>?_method=PUT" method="POST" class="edit-review-form">

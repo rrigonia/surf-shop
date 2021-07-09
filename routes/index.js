@@ -1,8 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const {wrapAsync} = require('../middleware')
-const { postRegister,  getRegister, index, postLogin, getLogin, getLogout } = require('../controllers');
+const {wrapAsync, isLoggedIn} = require('../middleware')
+const {
+   postRegister,
+   getRegister,
+   index,
+   postLogin,
+   getLogin,
+   getLogout,
+   getProfile } = require('../controllers');
 
 /* GET home page. */
 router.get('/', index);
@@ -18,15 +25,15 @@ router.get('/login', getLogin);
 
 /* POST /login */
 router.post('/login', passport.authenticate('local', {
-  failureRedirect: '/login', failureFlash: 'Incorrect username or password'}), postLogin);
+  failureRedirect: '/login',
+   failureFlash: 'Incorrect username or password'
+  }), wrapAsync(postLogin));
 
 // GET /logout
 router.get('/logout', getLogout);
 
 /* GET /profile */
-router.get('/profile', (req, res, next) => {
-  res.send('GET /profile');
-});
+router.get('/profile', isLoggedIn, wrapAsync(getProfile));
 
 /* PUT /profile/:user_id */
 router.put('/profile/:user_id', (req, res, next) => {

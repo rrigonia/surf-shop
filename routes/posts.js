@@ -21,7 +21,7 @@ router.post('/',isLoggedIn, upload.array('images', 4), wrapAsync(postCreate));
 router.get('/:id', wrapAsync(postShow));
 
 /* GET posts edit  /posts/:id/edit */
-router.get('/:id/edit',isLoggedIn, isAuthor,  wrapAsync(postEdit));
+router.get('/:id/edit',isLoggedIn, isAuthor,  postEdit);
 
 /* PUT posts update  /posts/:id */
 router.put('/:id',isLoggedIn, isAuthor, upload.array('images', 4), wrapAsync(postUpdate));
