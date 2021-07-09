@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const multer = require('multer');
+const {storage} = require('../cloudinary')
+const upload = multer({storage});
 const {wrapAsync, isLoggedIn, isValidPassword, changePassword} = require('../middleware')
 const {
    postRegister,
@@ -18,7 +21,7 @@ router.get('/', index);
 // REGISTER ROUTE
 router.route('/register')
   .get(getRegister)
-  .post(wrapAsync(postRegister));
+  .post(upload.single('image'), wrapAsync(postRegister));
 
 
 //LOGIN ROUTE
@@ -36,7 +39,7 @@ router.get('/logout', getLogout);
 //PROFILE ROUTE
 router.route('/profile')
   .get(isLoggedIn, wrapAsync(getProfile))
-  .put(isValidPassword, changePassword, putProfile);
+  .put(upload.single('image'), isValidPassword, changePassword, putProfile);
 
 // FORGOT ROUTE
 router.route('/forgot')

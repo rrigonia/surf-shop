@@ -1,6 +1,7 @@
 const Review = require('../models/review');
 const Post = require('../models/post');
 const User = require('../models/user');
+const {cloudinary} = require('../cloudinary');
 
 module.exports.wrapAsync = function(fn) {
     return function(req, res,next) {
@@ -56,6 +57,7 @@ module.exports.isValidPassword = async (req,res,next) => {
             res.locals.user = user;
             return next();
         } else {
+            this.deleteProfileImage(req);
             req.flash('error', 'Incorrect current Password');
             return res.redirect('/profile');
         }
@@ -71,6 +73,7 @@ module.exports.changePassword = async (req,res,next) => {
             passwordConfirmation
         } = req.body.user;
         if (newPassword && !passwordConfirmation) {
+            this.deleteProfileImage(req);
             req.flash('error', 'Missing password confirmation!');
             return res.redirect('/profile')
         } else if (newPassword && passwordConfirmation){
@@ -79,6 +82,7 @@ module.exports.changePassword = async (req,res,next) => {
                 await user.setPassword(newPassword);
                 return next();
             } else {
+                this.deleteProfileImage(req);
                 req.flash('error', 'New Passwords must match');
                 return res.redirect('/profile');
             }
@@ -88,4 +92,8 @@ module.exports.changePassword = async (req,res,next) => {
     } catch(err){
         return next(err)
     }
-}
+};
+
+module.exports.deleteProfileImage = async req => {
+    if (req.file) await cloudinary.uploader.destroy(req.file.filename);
+};

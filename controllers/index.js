@@ -1,6 +1,10 @@
 const User = require('../models/user');
 const Post = require('../models/post');
 const util = require('util');
+const {cloudinary} = require('../cloudinary');
+const {deleteProfileImage} = require('../middleware');
+
+
 
 // GET LandingPage
 module.exports.index = async (req, res, next) => {
@@ -14,18 +18,20 @@ module.exports.getRegister = (req, res, next) => {
 };
 // POST REGISTER
 module.exports.postRegister = async (req, res, next) => {
-
-    const { username, password, email, image } = req.body;
-    const newUser = new User({ username, email, image });
-    // Checking if the email is unique
     try {
-    const user = await User.register(newUser, password);
-    req.login(user, err => {
-        if(err) return next(err)
-        req.flash('success', `Welcome to the Surf-Shop, ${user.username}`)
-        res.redirect('/');
-    });
+        if(req.file) {
+            const { path, filename } = req.file;
+            req.body.image = {path, filename};
+        }
+        // Checking if the email is unique            
+        const user = await User.register(new User(req.body), req.body.password);
+        req.login(user, err => {
+            if(err) return next(err)
+            req.flash('success', `Welcome to the Surf-Shop, ${user.username}`)
+            res.redirect('/');
+        });
     } catch(err){
+        deleteProfileImage(req);
         let error = err.message;
         if(error.includes('duplicate') && error.includes('email_1 dup key')){
             error = 'A user with the given email already exists';
@@ -39,7 +45,6 @@ module.exports.postRegister = async (req, res, next) => {
 module.exports.getLogin = (req, res, next) => {
     if(req.isAuthenticated()) return res.redirect('/');
     if(req.query.returnTo) req.session.redirectTo = req.headers.referer;
-    console.log(req.headers)
     res.render('users/login', { title: 'Surf Shop - Login' });
 }
 
@@ -68,9 +73,15 @@ module.exports.putProfile = async (req, res, next) => {
     const {user} = res.locals;
     if(username) user.username = username;
     if(email) user.email = email;
+    if(req.file) {
+        if(user.image.filename) cloudinary.uploader.destroy(user.image.filename);
+        const {path, filename} = req.file;
+        user.image = {path, filename};
+    }
     await user.save();
     const login = util.promisify(req.login.bind(req));
     await login(user);
     req.flash('success', 'Profile has been successfully updated!');
+    
     res.redirect('/profile');
   }
