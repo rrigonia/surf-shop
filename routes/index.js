@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const {wrapAsync, isLoggedIn} = require('../middleware')
+const {wrapAsync, isLoggedIn, isValidPassword, changePassword} = require('../middleware')
 const {
    postRegister,
    getRegister,
@@ -9,7 +9,8 @@ const {
    postLogin,
    getLogin,
    getLogout,
-   getProfile } = require('../controllers');
+   getProfile,
+   putProfile } = require('../controllers');
 
 /* GET home page. */
 router.get('/', index);
@@ -20,45 +21,40 @@ router.route('/register')
   .post(wrapAsync(postRegister));
 
 
-/* GET /login */
-router.get('/login', getLogin);
+//LOGIN ROUTE
+router.route('/login')
+  .get(getLogin) 
+  .post(passport.authenticate('local', {
+    failureRedirect: '/login',
+    failureFlash: 'Incorrect username or password'
+    }), wrapAsync(postLogin));
 
-/* POST /login */
-router.post('/login', passport.authenticate('local', {
-  failureRedirect: '/login',
-   failureFlash: 'Incorrect username or password'
-  }), wrapAsync(postLogin));
 
 // GET /logout
 router.get('/logout', getLogout);
 
-/* GET /profile */
-router.get('/profile', isLoggedIn, wrapAsync(getProfile));
+//PROFILE ROUTE
+router.route('/profile')
+  .get(isLoggedIn, wrapAsync(getProfile))
+  .put(isValidPassword, changePassword, putProfile);
 
-/* PUT /profile/:user_id */
-router.put('/profile/:user_id', (req, res, next) => {
-  res.send('PUT /profile/:user_id');
-});
+// FORGOT ROUTE
+router.route('/forgot')
+    .get((req, res, next) => {
+      res.send('GET /forgot');
+    })
+    .put((req, res, next) => {
+      res.send('PUT /forgot');
+    });
 
-/* GET /forgot */
-router.get('/forgot', (req, res, next) => {
-  res.send('GET /forgot');
-});
-
-/* PUT /forgot */
-router.put('/forgot', (req, res, next) => {
-  res.send('PUT /forgot');
-});
-
-/* GET /reset/:token */
-router.get('/reset/:token', (req, res, next) => {
+// RESET TOKEN ROUTE
+router.route('/reset/:token')
+  .get((req, res, next) => {
   res.send('GET /reset/:token');
-});
-
-/* PUT /reset/:token */
-router.put('/reset/:token', (req, res, next) => {
-  res.send('PUT /reset/:token');
-});
+  })
+  .put((req, res, next) => {
+    res.send('PUT /reset/:token');
+  });
 
 
 module.exports = router;

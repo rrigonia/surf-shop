@@ -65,22 +65,12 @@ passport.deserializeUser(User.deserializeUser());
 
 // set variables middleware
 app.use(function(req,res,next){
-  // req.user = {
-  //  '_id' :'60e615101d93aa3ea0575b5f',
-  //  'username' : 'ramon3'
-  //   };
   res.locals.currentUser = req.user;
   // set default page title
   res.locals.title = 'Surf-Shop';
-  // flash mssgs succes
-  res.locals.fsuccess = req.flash('success')
-  res.locals.ferror = req.flash('error')
-  // set success flash message
-  res.locals.success = req.session.success || '';
-  delete req.session.success;
-  // set error flash message
-  res.locals.error = req.session.error || '';
-  delete req.session.error;
+  // flash mssgs
+  res.locals.success = req.flash('success')
+  res.locals.error = req.flash('error')
   // continue on to next function in middleware chain
   next();
 });
@@ -105,7 +95,7 @@ app.use(function (err, req, res, next) {
   // res.status(err.status || 500);
   // res.render('error');
   console.log(err);
-  req.session.error = err.message;
+  req.flash('error', err.message);
   res.redirect('back');
 });
 

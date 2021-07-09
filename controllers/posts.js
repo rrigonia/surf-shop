@@ -33,7 +33,7 @@ module.exports.postCreate = async (req, res, next) => {
     post.author = req.user._id;
     post.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     await post.save();
-    req.session.success = 'Post created successfully';
+    req.flash('success','Post created successfully');
     res.redirect(`/posts/${post._id}`);
 };
 

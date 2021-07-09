@@ -1,10 +1,6 @@
 const User = require('../models/user');
 const Post = require('../models/post');
-const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
-const mapBoxToken = process.env.MAPBOX_TOKEN;
-const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
-
-
+const util = require('util');
 
 // GET LandingPage
 module.exports.index = async (req, res, next) => {
@@ -24,9 +20,9 @@ module.exports.postRegister = async (req, res, next) => {
     // Checking if the email is unique
     try {
     const user = await User.register(newUser, password);
-    req.login(user, function(err){
+    req.login(user, err => {
         if(err) return next(err)
-        req.session.success = `Welcome to the Surf-Shop, ${user.username}`
+        req.flash('success', `Welcome to the Surf-Shop, ${user.username}`)
         res.redirect('/');
     });
     } catch(err){
@@ -65,3 +61,16 @@ module.exports.getProfile = async (req, res, next) => {
     const posts = await Post.find({author: req.user._id}).limit(10).exec();
     res.render('users/profile', {posts, title: `Surf Shop - ${req.user.username}`})
 };
+
+// UPDATE PROFILE
+module.exports.putProfile = async (req, res, next) => {
+    const { username, email } = req.body.user;
+    const {user} = res.locals;
+    if(username) user.username = username;
+    if(email) user.email = email;
+    await user.save();
+    const login = util.promisify(req.login.bind(req));
+    await login(user);
+    req.flash('success', 'Profile has been successfully updated!');
+    res.redirect('/profile');
+  }

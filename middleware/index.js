@@ -9,20 +9,24 @@ module.exports.wrapAsync = function(fn) {
 };
 
 module.exports.isReviewAuthor = async (req,res,next) => {
-    // find review
-    const review = await Review.findById(req.params.review_id);
-    // check if is the same author
-    if(review.author.equals(req.user._id)){
-        return next();
-    } 
-    req.session.error = 'Bye bye!';
-    res.redirect('/');
+    try{
+        // find review
+        const review = await Review.findById(req.params.review_id);
+        // check if is the same author
+        if(review.author.equals(req.user._id)){
+            return next();
+        } 
+        req.flash('error','Bye bye!');
+        res.redirect('/');
+    } catch(err){
+        return next(err);
+    }
 };
 
 module.exports.isLoggedIn = async (req,res,next) => {
     try{
     if(req.isAuthenticated()) return next();
-    req.session.error = 'You must be logged in to do that!';
+    req.flash('error','You must be logged in to do that!');
     req.session.redirectTo = req.originalUrl;
     res.redirect('/login');
     } catch (err){
@@ -42,4 +46,46 @@ module.exports.isAuthor = async (req,res,next) => {
     } catch(err) {
         return next(err)
     };
+};
+
+module.exports.isValidPassword = async (req,res,next) => {
+    try{
+        const {user} = await User.authenticate()(req.user.username, req.body.user.currentPassword);
+        if(user){
+            // add user to res.locals
+            res.locals.user = user;
+            return next();
+        } else {
+            req.flash('error', 'Incorrect current Password');
+            return res.redirect('/profile');
+        }
+    } catch(err) {
+        return next(err);
+    }
+};
+
+module.exports.changePassword = async (req,res,next) => {
+    try{
+        const {
+            newPassword,
+            passwordConfirmation
+        } = req.body.user;
+        if (newPassword && !passwordConfirmation) {
+            req.flash('error', 'Missing password confirmation!');
+            return res.redirect('/profile')
+        } else if (newPassword && passwordConfirmation){
+            const {user} = res.locals
+            if(newPassword === passwordConfirmation){
+                await user.setPassword(newPassword);
+                return next();
+            } else {
+                req.flash('error', 'New Passwords must match');
+                return res.redirect('/profile');
+            }
+        } else {
+            return next();
+        }
+    } catch(err){
+        return next(err)
+    }
 }
