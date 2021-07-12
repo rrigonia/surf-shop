@@ -16,9 +16,10 @@ db.once('open', function () {
 });
 
 async function seedPosts() {
-    await Post.remove();
-    for(const i of new Array(60)){
+    await Post.deleteMany();
+    for(const i of new Array(200)){
         const rand1000 = Math.floor(Math.random() *1000);
+        const rand5 = Math.floor(Math.random() *6);
         const post = {
             title: faker.lorem.word(),
             description: faker.lorem.text(),
@@ -27,7 +28,9 @@ async function seedPosts() {
             geometry: {
                 type: 'Point',
                 coordinates: [cities[rand1000].longitude, cities[rand1000].latitude]
-             }
+             },
+             price: rand1000,
+             avgRating: rand5,
         };
         
         await Post.create(post);
@@ -36,6 +39,6 @@ async function seedPosts() {
 };
 
 seedPosts().then(()=>{
-    console.log('new 60 posts created!');
+    console.log('new 200 posts created!');
     mongoose.connection.close();
 });
