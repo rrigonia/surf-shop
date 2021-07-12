@@ -13,7 +13,11 @@ const {
    getLogin,
    getLogout,
    getProfile,
-   putProfile } = require('../controllers');
+   putProfile,
+   getForgotPw,
+   putForgotPw,
+   getReset,
+   putReset } = require('../controllers');
 
 /* GET home page. */
 router.get('/', index);
@@ -42,22 +46,14 @@ router.route('/profile')
   .put(upload.single('image'), isValidPassword, changePassword, putProfile);
 
 // FORGOT ROUTE
-router.route('/forgot')
-    .get((req, res, next) => {
-      res.send('GET /forgot');
-    })
-    .put((req, res, next) => {
-      res.send('PUT /forgot');
-    });
+router.route('/forgot-password')
+    .get(getForgotPw)
+    .put(wrapAsync(putForgotPw));
 
 // RESET TOKEN ROUTE
 router.route('/reset/:token')
-  .get((req, res, next) => {
-  res.send('GET /reset/:token');
-  })
-  .put((req, res, next) => {
-    res.send('PUT /reset/:token');
-  });
+  .get(wrapAsync(getReset))
+  .put(wrapAsync(putReset));
 
 
 module.exports = router;
