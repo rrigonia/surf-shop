@@ -3,12 +3,12 @@ const router = express.Router();
 const multer = require('multer');
 const {storage} = require('../cloudinary')
 const upload = multer({storage});
-const {wrapAsync, isLoggedIn, isAuthor} = require('../middleware');
+const {wrapAsync, isLoggedIn, isAuthor, searchAndFilterPosts} = require('../middleware');
 const {postIndex, postNew, postCreate, postShow, postEdit, postUpdate, postDestroy} = require('../controllers/posts')
 
 
 /* GET posts index  /posts */
-router.get('/', wrapAsync(postIndex));
+router.get('/',searchAndFilterPosts, wrapAsync(postIndex));
 
 
 /* GET posts new  /posts/new */

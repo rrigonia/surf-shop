@@ -7,12 +7,18 @@ const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 
 // POSTs INDEX
 module.exports.postIndex = async (req, res, next) => {
-    const posts = await Post.paginate({}, {
+    const {dbQuery} = res.locals;
+    console.log(dbQuery);
+    delete res.locals.dbQuery;
+    const posts = await Post.paginate(dbQuery, {
         page: req.query.page || 1,
         limit: 10,
         sort: {'_id': -1}
     });
-    posts.page = Number(posts.page)
+    posts.page = Number(posts.page);
+    if(!posts.docs.length && res.locals.query){
+        res.locals.error = 'Sorry, no results match that query.';
+    }
     res.render('posts/index', { posts, title: 'Surf Shop - Posts' });
 };
 
@@ -48,7 +54,8 @@ module.exports.postShow = async (req, res, next) => {
             model: 'User'
         }
     });
-    const floorRating = post.calculateAvgRating();
+    // const floorRating = post.calculateAvgRating();
+    const floorRating = post.avgRating;
     res.render('posts/show', { post, title: 'Surf Shop - ShowPost', floorRating });
 };
 

@@ -2,6 +2,13 @@ const Review = require('../models/review');
 const Post = require('../models/post');
 const User = require('../models/user');
 const {cloudinary} = require('../cloudinary');
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+  };
 
 module.exports.wrapAsync = function(fn) {
     return function(req, res,next) {
@@ -96,4 +103,75 @@ module.exports.changePassword = async (req,res,next) => {
 
 module.exports.deleteProfileImage = async req => {
     if (req.file) await cloudinary.uploader.destroy(req.file.filename);
+};
+
+module.exports.searchAndFilterPosts = async (req,res, next) => {
+    try{
+    // Check if the user submit the searchAndFiler form . Put the query into an array with the keys.
+    const queryKeys = Object.keys(req.query);
+    // Now we check if this array exists
+    if(queryKeys.length){
+        const dbQueries = [];
+        let {search, price, avgRating, location, distance} = req.query;
+        // if there is a search input...
+        if (search){
+            // using regular expression to escape the $& strings
+            search = new RegExp(escapeRegExp(search), 'gi');
+            // Then we push to our array an object with title,description and location with the 'search' result 
+            dbQueries.push({$or: [
+                {title: search},
+                {description: search},
+                {location: search}
+            ]});
+        };
+        if(location) {
+            let coordinates;
+            try{
+                if(typeof JSON.parse(location) === 'number') {
+                    throw new Error;
+                }
+                
+                location = JSON.parse(location);  
+                coordinates = location;              
+            } catch(err) {
+                const geolocation = await geocoder.forwardGeocode({
+                    query: location,
+                    limit: 1
+                }).send();
+                coordinates = geolocation.body.features[0].geometry.coordinates;
+            }
+            
+            let maxDistance = distance || 25;
+            maxDistance *= 1609.34;
+            dbQueries.push({
+                geometry: {
+                    $near: {
+                        $geometry: {
+                            type: 'Point',
+                            coordinates
+                        },
+                        $maxDistance: maxDistance
+                    }
+                }
+            });   
+        };
+        if(price){
+            if(price.min) dbQueries.push({price: {$gt: Number(price.min)}});
+            if(price.max) dbQueries.push({price: {$lt: Number(price.max)}});
+        };
+        if(avgRating){
+            dbQueries.push({avgRating: {$in: avgRating}})
+        };
+        res.locals.dbQuery = dbQueries.length ? {$and: dbQueries} : {};
+
+    };
+
+    res.locals.query = req.query;
+    queryKeys.splice(queryKeys.indexOf('page'), 1);
+    const delimiter = queryKeys.length ? '&' : '?';
+    res.locals.paginateUrl = req.originalUrl.replace(/(\?|\&)page=\d+/g, '') + `${delimiter}page=`;
+    next();
+    } catch(err){
+        next(err);
+    }
 };

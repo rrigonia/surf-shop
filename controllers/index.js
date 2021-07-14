@@ -48,8 +48,9 @@ module.exports.postRegister = async (req, res, next) => {
 module.exports.getLogin = (req, res, next) => {
     if(req.isAuthenticated()) return res.redirect('/');
     if(req.query.returnTo) req.session.redirectTo = req.headers.referer;
+    console.log(req.headers)
     res.render('users/login', { title: 'Surf Shop - Login' });
-}
+};
 
 // POST LOGIN
 module.exports.postLogin = async (req,res,next) => {

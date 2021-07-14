@@ -19,7 +19,7 @@ const opts = { toJSON: { virtuals: true} };
 
 const PostSchema = new Schema({
     title: String,
-    price: String,
+    price: Number,
     description: String,
     images: [ImageSchema],
     location: String,
@@ -82,7 +82,6 @@ PostSchema.methods.calculateAvgRating = function() {
 
 PostSchema.plugin(mongoosePaginate);
 
-PostSchema.index({geometry: '2dsphere'});
-
+PostSchema.index({ geometry: '2dsphere' });
 
 module.exports = mongoose.model('Post', PostSchema);
